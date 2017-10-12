@@ -3,20 +3,36 @@ import PropTypes from 'prop-types'
 
 class Book extends Component {
   static propTypes = {
+    id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     authors: PropTypes.array.isRequired,
     imageUrl: PropTypes.string.isRequired,
-    shelf: PropTypes.string
+    shelf: PropTypes.string.isRequired,
+    onShelfChange: PropTypes.func.isRequired
+  }
+
+  state = {
+    shelf: this.props.shelf
+  }
+
+  change = (e) => {
+    this.setState({ shelf: e.target.value })
+  }
+
+  componentDidUpdate() {
+    if (this.state.shelf != this.props.shelf) {
+      this.props.onShelfChange(this.props, this.state.shelf)
+    }
   }
 
   render() {
-    const { title, authors, imageUrl } = this.props
+    const { id, title, authors, imageUrl, shelf } = this.props
     return (
       <div className={`book`}>
         <div className={`book-top`}>
           <div className={`book-cover`} style={{ width: 128, height: 193, backgroundImage: `url("${imageUrl}")` }}></div>
           <div className={`book-shelf-changer`}>
-            <select>
+            <select onChange={this.change} value={this.state.shelf}>
               <option value="none" disabled>Move to...</option>
               <option value="currentlyReading">Currently Reading</option>
               <option value="wantToRead">Want to Read</option>
